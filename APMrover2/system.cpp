@@ -321,6 +321,66 @@ uint8_t Rover::check_digital_pin(uint8_t pin)
     return hal.gpio->read(pin);
 }
 
+void Rover::check_digital_pin_mode_input()
+{
+    static uint8_t value_mask = 0;
+    uint8_t new_mask = 0;
+    int8_t pin[4] = {g2.mode_pin[0].get(),
+                    g2.mode_pin[1].get(),
+                    g2.mode_pin[2].get(),
+                    g2.mode_pin[3].get()};
+
+    for (uint8_t i = 0; i < 4; i++) {
+        if (pin[i] < 0) {
+            continue;
+        }
+
+        // ensure we are in input mode
+        hal.gpio->pinMode(pin[i], HAL_GPIO_INPUT);
+
+        // enable pullup
+        hal.gpio->write(pin[i], 1);
+
+        // read pin
+        if (hal.gpio->read(pin[i])) {
+            new_mask |= 1 << i;
+        }
+    }
+
+    // check new value
+    if (value_mask == new_mask) {
+        return;
+    }
+
+    value_mask = new_mask;
+
+    // HOLD mode
+    if (value_mask == 0b1101) {
+        if (control_mode->mode_number() != Mode::Number::HOLD) {
+            set_mode(Mode::Number::HOLD, ModeReason::TERMINATE);
+        }
+
+    // GUIDED
+    } else if (value_mask == 0b1110) {
+        if (control_mode->mode_number() != Mode::Number::GUIDED) {
+            set_mode(Mode::Number::GUIDED, ModeReason::TERMINATE);
+            Location target_loc = rover.current_loc;
+            if (g2.guided_lat != 0 && g2.guided_lng != 0) {
+                target_loc.lat = g2.guided_lat;
+                target_loc.lng = g2.guided_lng;
+                gcs().send_text(MAV_SEVERITY_INFO, "guided location[%d %d]", (int)target_loc.lat, (int)target_loc.lng);
+            } else {
+                gcs().send_text(MAV_SEVERITY_INFO, "unvalid guided location, stay where you are");
+            }
+
+            if (!mode_guided.set_desired_location(target_loc)) {
+
+            }
+            mode_guided.set_desired_speed(g2.guided_speed);
+        }
+    }
+}
+
 /*
   should we log a message type now?
  */
