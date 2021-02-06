@@ -28,14 +28,14 @@ const AP_FWVersion AP_FWVersion::fwver{
     .fw_string = THISFIRMWARE,
     .fw_hash_str = "",
 #else
-    .fw_string = THISFIRMWARE " (" GIT_VERSION ")",
+    .fw_string = THISFIRMWARE,
     .fw_hash_str = GIT_VERSION,
 #endif
     .middleware_name = nullptr,
     .middleware_hash_str = nullptr,
 #ifdef CHIBIOS_GIT_VERSION
-    .os_name = "ChibiOS",
-    .os_hash_str = CHIBIOS_GIT_VERSION,
+    .os_name = "stable",
+    .os_hash_str = "1.0",
 #else
     .os_name = nullptr,
     .os_hash_str = nullptr,
