@@ -6,7 +6,7 @@
 
 #include "ap_version.h"
 
-#define THISFIRMWARE "ArduRover V4.0.0-dev"
+#define THISFIRMWARE "HuaWei Special equipment"
 
 // the following line is parsed by the autotest scripts
 #define FIRMWARE_VERSION 4,0,0,FIRMWARE_VERSION_TYPE_DEV
