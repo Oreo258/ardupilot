@@ -30,7 +30,8 @@ public:
         RTL          = 11,
         SMART_RTL    = 12,
         GUIDED       = 15,
-        INITIALISING = 16
+        INITIALISING = 16,
+        REPEAT       = 17
     };
 
     // Constructor
@@ -660,3 +661,35 @@ private:
     float _desired_heading_cd;  // latest desired heading (in centi-degrees) from pilot
 };
 
+//REPEAT
+class ModeRepeat : public Mode
+{
+public:
+
+    uint32_t mode_number() const override { return REPEAT; }
+    const char *name4() const override { return "REPE"; }
+
+    // methods that affect movement of the vehicle in this mode
+    void update() override;
+
+    // attributes of the mode
+    bool is_autopilot_mode() const override { return true; }
+
+    // return desired location
+    bool get_desired_location(Location& destination) const override WARN_IF_UNUSED;
+
+    // return distance (in meters) to destination
+    float get_distance_to_destination() const override { return _distance_to_destination; }
+
+protected:
+
+    bool _enter() override;
+
+private:
+ 
+    bool round;
+    int32_t round_count;
+    uint32_t last_stop_time_ms;
+    Location origin_loc;
+    Location destination_loc;
+};
