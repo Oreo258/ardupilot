@@ -118,6 +118,7 @@ public:
     friend class ModeSmartRTL;
     friend class ModeFollow;
     friend class ModeSimple;
+    friend class ModeRepeat;
 
     friend class RC_Channel_Rover;
     friend class RC_Channels_Rover;
@@ -289,6 +290,7 @@ private:
     ModeSmartRTL mode_smartrtl;
     ModeFollow mode_follow;
     ModeSimple mode_simple;
+    ModeRepeat mode_repeat;
 
     // cruise throttle and speed learning
     typedef struct {
@@ -407,6 +409,7 @@ private:
     void startup_INS_ground(void);
     void notify_mode(const Mode *new_mode);
     uint8_t check_digital_pin(uint8_t pin);
+    void check_digital_pin_mode_input();
     bool should_log(uint32_t mask);
     bool is_boat() const;
 
