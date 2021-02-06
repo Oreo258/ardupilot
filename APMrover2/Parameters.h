@@ -398,6 +398,16 @@ public:
 
     // FS options
     AP_Int32 fs_options;
+    
+    AP_Int32 round_max;
+    AP_Float round_delay;
+
+    AP_Int8 mode_pin[4];
+
+    AP_Float guided_speed;
+    AP_Int32 guided_lat;
+    AP_Int32 guided_lng;
+    AP_Int8  _formation_leader_id;
 };
 
 extern const AP_Param::Info var_info[];
