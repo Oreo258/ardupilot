@@ -541,6 +541,15 @@ bool ModeAuto::do_nav_wp(const AP_Mission::Mission_Command& cmd, bool always_sto
 
     // retrieve and sanitize target location
     Location cmdloc = cmd.content.location;
+
+    //set the way point speed
+    if(cmdloc.alt>0){
+        g2.wp_nav.set_desired_speed(cmdloc.alt*0.01f); //cm/s-->m/s
+    }else{
+        //default waypoint speed by param Way_point_speed
+        g2.wp_nav.set_desired_speed_to_default();
+    }
+    
     cmdloc.sanitize(rover.current_loc);
     if (!set_desired_location(cmdloc, next_leg_bearing_cd)) {
         return false;
