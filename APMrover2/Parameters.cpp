@@ -637,8 +637,6 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     AP_GROUPINFO("SC_LAT", 56, ParametersG2, guided_lat, 0),
     AP_GROUPINFO("SC_LNG", 57, ParametersG2, guided_lng, 0),
     AP_GROUPINFO("FOR_LEADER_ID", 58, ParametersG2, _formation_leader_id,1),
-    
-
     AP_GROUPEND
 };
 
