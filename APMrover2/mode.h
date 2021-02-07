@@ -16,7 +16,7 @@ class Mode
 {
 public:
 
-    // Auto Pilot modes
+    // Auto Pilot modes 
     // ----------------
     enum Number : uint8_t {
         MANUAL       = 0,
