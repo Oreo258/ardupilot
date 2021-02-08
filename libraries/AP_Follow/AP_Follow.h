@@ -86,6 +86,9 @@ public:
     // get bearing to target (including offset) in degrees (for reporting purposes)
     float get_bearing_to_target() const { return _bearing_to_target; }
 
+    //GET head mode
+    int get_follow_head_mode(){return _follw_head_mode;}
+
     // parameter list
     static const struct AP_Param::GroupInfo var_info[];
 
@@ -115,6 +118,8 @@ private:
     AP_Int8     _yaw_behave;        // following vehicle's yaw/heading behaviour (see YAW_BEHAVE enum)
     AP_Int8     _alt_type;          // altitude source for follow mode
     AC_P        _p_pos;             // position error P controller
+
+    AP_Int8     _follw_head_mode;  //head mode use speed,use master head,or both
 
     // local variables
     bool _healthy;                  // true if we are receiving mavlink messages (regardless of whether they have target position info within them)
