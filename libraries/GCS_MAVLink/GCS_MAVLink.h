@@ -74,3 +74,8 @@ void comm_send_lock(mavlink_channel_t chan);
 void comm_send_unlock(mavlink_channel_t chan);
 
 #pragma GCC diagnostic pop
+
+typedef struct CommandFromGCS{
+  uint8_t move_diret;
+  uint8_t thr;
+}command_from_gcs_t;
