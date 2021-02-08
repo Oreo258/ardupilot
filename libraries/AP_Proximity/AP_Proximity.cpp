@@ -25,6 +25,7 @@
 #include "AP_Proximity_MorseSITL.h"
 #include "AP_Proximity_AirSimSITL.h"
 #include <AP_AHRS/AP_AHRS.h>
+#include "AP_Proximity_DYP.h"
 
 extern const AP_HAL::HAL &hal;
 
@@ -324,6 +325,14 @@ void AP_Proximity::detect_instance(uint8_t instance)
         if (AP_Proximity_LightWareSF40C::detect()) {
             state[instance].instance = instance;
             drivers[instance] = new AP_Proximity_LightWareSF40C(*this, state[instance]);
+            return;
+        }
+        break;
+
+    case Type::DYP:
+        if(AP_Proximity_DYP::detect()){
+            state[instance].instance = instance;
+            drivers[instance] = new AP_Proximity_DYP(*this, state[instance]);
             return;
         }
         break;
