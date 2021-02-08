@@ -145,3 +145,61 @@ void Rover::rpm_update(void)
         }
     }
 }
+
+/*
+  update buton handle function
+*/
+void Rover::update_button_handle(void)
+{   static uint8_t _last_mask=15;
+    static bool _hit_need_resume=false;
+    static bool _hit_need_rtl=false;
+
+    uint8_t last_mask=rover.button.getLastGpioInputMask();
+    static Location interrupt_destination;
+    if(_last_mask==last_mask){
+        return;
+    }
+    _last_mask=last_mask;
+    // hit the target,stop the vehicle
+    if(_last_mask==13){ //1101=13
+        rover.set_mode( Mode::HOLD, ModeReason::UNKNOWN);
+        _hit_need_rtl=true;
+        //hal.console->printf("Hit the target");
+    }else if(_last_mask==14){ //not hit the target ,set guied mode 1110=14
+        rover.set_mode( Mode::GUIDED, ModeReason::UNKNOWN);
+        Location stop_destination;
+        //get stop point
+        rover.g2.serial_control.getStopPoint(stop_destination);
+        //set guid stop point
+        if(stop_destination.initialised()){
+            if(!rover.control_mode->set_desired_location(stop_destination)){
+            }
+        }
+        //get stop point speed
+        float speed=rover.g2.serial_control.getStopSpeed();
+        if(speed>0.0f){
+            rover.control_mode->set_desired_speed(speed);
+        }
+        //get the current point
+        interrupt_destination=rover.current_loc;
+        _hit_need_resume=true;
+    }else if(_last_mask==15){  //go on
+        if(_hit_need_resume){
+            //
+            if(rover.set_mode( Mode::GUIDED, ModeReason::UNKNOWN)){
+                //guided to the hit point
+                if(interrupt_destination.initialised()){
+                    if(!rover.control_mode->set_desired_location(interrupt_destination)){
+                    }
+                }
+                //clear the 
+                interrupt_destination.zero();
+                rover._need_restart_auto_mission=true;
+                _hit_need_resume=false;
+            }
+        }else if(_hit_need_rtl){
+            rover.set_mode(Mode::RTL,ModeReason::UNKNOWN);
+            _hit_need_rtl=false;
+        }
+    }
+}
