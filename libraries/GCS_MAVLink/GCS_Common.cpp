@@ -1301,6 +1301,69 @@ void GCS_MAVLINK::packetReceived(const mavlink_status_t &status,
     handleMessage(msg);
 }
 
+command_from_gcs_t GCS_MAVLINK::_command_from_gcs;
+void GCS_MAVLINK::parserCommand(uint8_t msg)
+{
+    switch(_parse_phase){
+        case 0:
+            if(msg==0x55){
+                _parse_phase=1;
+            }else{
+                _parse_phase=0;
+            }
+            _parse_count=0;
+            break;
+        case 1:
+            if(msg==0xAA){
+                _parse_phase=2;
+            }else{
+                _parse_phase=0;
+            }
+            _parse_count=0;
+            break;
+        case 2:
+            _buffer[_parse_count++]=msg;
+            if(_parse_count==4){
+                _parse_count=0;
+                _parse_phase=0;
+                uint16_t check_sum1=_buffer[0]+_buffer[1]+0x55+0xAA;
+                uint16_t check_sum2=(8<<_buffer[3])|_buffer[2];
+                if(check_sum1==check_sum2){
+                    switch(_buffer[0]){
+                        case 100:
+                            if(_command_from_gcs.move_diret!=_buffer[1]){
+                                _command_from_gcs.move_diret=_buffer[1];
+                                _command_from_gcs.thr=5;
+                            }
+                            break;
+                        case 101:
+                            if(_buffer[1]==1){
+                                if(_command_from_gcs.thr<50){
+                                    _command_from_gcs.thr+=5;
+                                }
+                            }else if(_buffer[1]==2){
+                                if(_command_from_gcs.thr>=5){
+                                    _command_from_gcs.thr-=5;
+                                }
+                            }
+                            break;
+                        case 102:
+                            _command_from_gcs.thr=_buffer[1]*10;
+                            if(_command_from_gcs.thr>50){
+                                _command_from_gcs.thr=50;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            break;
+        default:
+            break;
+    }
+}
+
 void
 GCS_MAVLINK::update_receive(uint32_t max_time_us)
 {
@@ -1358,6 +1421,8 @@ GCS_MAVLINK::update_receive(uint32_t max_time_us)
             gcs_alternative_active[chan] = false;
             alternative.last_mavlink_ms = now_ms;
             hal.util->persistent_data.last_mavlink_msgid = 0;
+        }else{
+            parserCommand(c);
         }
 
         if (parsed_packet || i % 100 == 0) {
@@ -3298,18 +3363,21 @@ void GCS_MAVLINK::send_banner()
                   fwver.os_name, fwver.os_hash_str);
     } else if (fwver.os_name) {
         send_text(MAV_SEVERITY_INFO, "%s: %s",
+
                   fwver.os_name, fwver.os_hash_str);
     }
 
     // send system ID if we can
     char sysid[40];
     if (hal.util->get_system_id(sysid)) {
+
         send_text(MAV_SEVERITY_INFO, "%s", sysid);
     }
 
     // send RC output mode info if available
     char banner_msg[50];
     if (hal.rcout->get_output_mode_banner(banner_msg, sizeof(banner_msg))) {
+        
         send_text(MAV_SEVERITY_INFO, "%s", banner_msg);
     }
 }
