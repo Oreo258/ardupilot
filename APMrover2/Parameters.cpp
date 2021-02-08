@@ -173,7 +173,7 @@ const AP_Param::Info Rover::var_info[] = {
     // @DisplayName: Mode channel
     // @Description: RC Channel to use for driving mode control
     // @User: Advanced
-    GSCALAR(mode_channel,    "MODE_CH",       MODE_CHANNEL),
+    GSCALAR(mode_channel,    "MODE_CH",       5),
 
     // @Param: MODE1
     // @DisplayName: Mode1
@@ -194,28 +194,28 @@ const AP_Param::Info Rover::var_info[] = {
     // @Description: Driving mode for switch position 3 (1361 to 1490)
     // @Values: 0:Manual,1:Acro,3:Steering,4:Hold,5:Loiter,6:Follow,7:Simple,10:Auto,11:RTL,12:SmartRTL,15:Guided
     // @User: Standard
-    GSCALAR(mode3,           "MODE3",         Mode::Number::MANUAL),
+    GSCALAR(mode3,           "MODE3",         Mode::Number::HOLD),
 
     // @Param: MODE4
     // @DisplayName: Mode4
     // @Description: Driving mode for switch position 4 (1491 to 1620)
     // @Values: 0:Manual,1:Acro,3:Steering,4:Hold,5:Loiter,6:Follow,7:Simple,10:Auto,11:RTL,12:SmartRTL,15:Guided
     // @User: Standard
-    GSCALAR(mode4,           "MODE4",         Mode::Number::MANUAL),
+    GSCALAR(mode4,           "MODE4",         Mode::Number::HOLD),
 
     // @Param: MODE5
     // @DisplayName: Mode5
     // @Description: Driving mode for switch position 5 (1621 to 1749)
     // @Values: 0:Manual,1:Acro,3:Steering,4:Hold,5:Loiter,6:Follow,7:Simple,10:Auto,11:RTL,12:SmartRTL,15:Guided
     // @User: Standard
-    GSCALAR(mode5,           "MODE5",         Mode::Number::MANUAL),
+    GSCALAR(mode5,           "MODE5",         Mode::Number::AUTO),
 
     // @Param: MODE6
     // @DisplayName: Mode6
     // @Description: Driving mode for switch position 6 (1750 to 2049)
     // @Values: 0:Manual,1:Acro,3:Steering,4:Hold,5:Loiter,6:Follow,7:Simple,10:Auto,11:RTL,12:SmartRTL,15:Guided
     // @User: Standard
-    GSCALAR(mode6,           "MODE6",         Mode::Number::MANUAL),
+    GSCALAR(mode6,           "MODE6",         Mode::Number::AUTO),
 
     // @Param: TURN_MAX_G
     // @DisplayName: Turning maximum G force
@@ -628,6 +628,12 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     // @User: Advanced
     AP_GROUPINFO("FS_OPTIONS", 48, ParametersG2, fs_options, 0),
 
+    // @Group: SC_
+    // @Path: ../libraries/serial_control/serialcontrol.cpp
+    AP_SUBGROUPINFO(serial_control, "SC_", 49, ParametersG2, SerialControl),
+
+    AP_GROUPINFO("FOR_LEADER_ID", 50, ParametersG2, _formation_leader_id,1),
+
     AP_GROUPEND
 };
 
@@ -668,6 +674,7 @@ ParametersG2::ParametersG2(void)
 #endif
     beacon(rover.serial_manager),
     motors(rover.ServoRelayEvents),
+    serial_control(),
     wheel_rate_control(wheel_encoder),
     attitude_control(rover.ahrs),
     smart_rtl(),
@@ -748,8 +755,10 @@ void Rover::load_parameters(void)
 
     AP_Param::set_frame_type_flags(AP_PARAM_FRAME_ROVER);
 
-    SRV_Channels::set_default_function(CH_1, SRV_Channel::k_steering);
-    SRV_Channels::set_default_function(CH_3, SRV_Channel::k_throttle);
+    //SRV_Channels::set_default_function(CH_1, SRV_Channel::k_steering);
+    //SRV_Channels::set_default_function(CH_3, SRV_Channel::k_throttle);
+    SRV_Channels::set_default_function(CH_1,  SRV_Channel::k_throttleLeft);
+    SRV_Channels::set_default_function(CH_3,  SRV_Channel::k_throttleRight);
 
     if (is_balancebot()) {
         g2.crash_angle.set_default(30);
@@ -806,4 +815,92 @@ void Rover::load_parameters(void)
                                                       AP_BoardConfig::BOARD_SAFETY_OPTION_BUTTON_ACTIVE_SAFETY_ON|
                                                       AP_BoardConfig::BOARD_SAFETY_OPTION_BUTTON_ACTIVE_ARMED);
 #endif
+
+    /*set the default track param*/
+    //mode
+    AP_Param::set_by_name("MODE_CH",7);
+    AP_Param::set_by_name("MODE1",10);
+    AP_Param::set_by_name("MODE2",10);
+    AP_Param::set_by_name("MODE3",0);
+    AP_Param::set_by_name("MODE4",0);
+    AP_Param::set_by_name("MODE5",4);
+    AP_Param::set_by_name("MODE6",4);
+    //disable brake for auto mode ,if not the severout will <1500
+    AP_Param::set_by_name("ATC_BRAKE",0);
+    // formation switch
+    AP_Param::set_by_name("FOLL_ENABLE",0);
+    //gps nmea
+    AP_Param::set_by_name("GPS_TYPE",5);
+    AP_Param::set_by_name("BRD_PWM_COUNT",0);
+    AP_Param::set_by_name("BRD_SAFETYENABLE",0);
+    AP_Param::set_by_name("AHRS_EKF_TYPE",3);
+    AP_Param::set_by_name("EK3_ENABLE",1);
+    AP_Param::set_by_name("EK3_MAG_CAL",5);
+    AP_Param::set_by_name("EK3_GPS_TYPE",0);
+    AP_Param::set_by_name("SERVO1_FUNCTION",73);
+    AP_Param::set_by_name("SERVO3_FUNCTION",74);
+    AP_Param::set_by_name("SERIAL3_PROTOCOL",5);
+    AP_Param::set_by_name("SERIAL3_BAUD",115);
+    AP_Param::set_by_name("SERIAL4_PROTOCOL",30);
+    AP_Param::set_by_name("SERIAL4_BAUD",9);
+    AP_Param::set_by_name("SERIAL5_PROTOCOL",31);
+    AP_Param::set_by_name("SERIAL5_BAUD",9);
+    AP_Param::set_by_name("BTN_ENABLE",1);
+    AP_Param::set_by_name("BTN_PIN1",50);
+    AP_Param::set_by_name("BTN_PIN2",51);
+    AP_Param::set_by_name("BTN_PIN3",52);
+    AP_Param::set_by_name("BTN_PIN4",53);
+    AP_Param::set_by_name("COMPASS_USE",0);
+    AP_Param::set_by_name("COMPASS_USE2",0);
+    AP_Param::set_by_name("COMPASS_USE3",0);
+    AP_Param::set_by_name("RELAY_PIN",-1);
+    AP_Param::set_by_name("RELAY_PIN2",-1);
+    AP_Param::set_by_name("RELAY_PIN3",-1);
+    AP_Param::set_by_name("RELAY_PIN4",-1);
+    AP_Param::set_by_name("RELAY_PIN5",-1);
+    AP_Param::set_by_name("RELAY_PIN6",-1);
+    //rc map
+    AP_Param::set_by_name("RCMAP_THROTTLE",2); //throttle
+    AP_Param::set_by_name("RCMAP_ROLL",1); //steer
+    AP_Param::set_by_name("RCMAP_YAW",4); //lateral
+    AP_Param::set_by_name("RCMAP_PITCH",3);
+    //set rc steer
+    AP_Param::set_by_name("RC1_MAX",1932);
+    AP_Param::set_by_name("RC1_MIN",1065);
+    AP_Param::set_by_name("RC1_TRIM",1498);
+    AP_Param::set_by_name("RC1_DZ",50);
+    // throt
+    AP_Param::set_by_name("RC3_MAX",1932);
+    AP_Param::set_by_name("RC3_MIN",1065);
+    AP_Param::set_by_name("RC3_TRIM",1498);
+    AP_Param::set_by_name("RC3_DZ",50);
+    //not use
+    AP_Param::set_by_name("RC2_MAX",1932);
+    AP_Param::set_by_name("RC2_MIN",1065);
+    AP_Param::set_by_name("RC2_TRIM",1498);
+    AP_Param::set_by_name("RC2_DZ",50);
+    //not use
+    AP_Param::set_by_name("RC4_MAX",1932);
+    AP_Param::set_by_name("RC4_MIN",1065);
+    AP_Param::set_by_name("RC4_TRIM",1498);
+    AP_Param::set_by_name("RC4_DZ",50);
+    //target control
+    AP_Param::set_by_name("RC6_MAX",1933);
+    AP_Param::set_by_name("RC6_MIN",1094);
+    AP_Param::set_by_name("RC6_TRIM",1514);
+    AP_Param::set_by_name("RC6_OPTION",400);
+    AP_Param::set_by_name("RC6_DZ",0);
+    //try motor
+    AP_Param::set_by_name("RC9_MAX",1932);
+    AP_Param::set_by_name("RC9_MIN",1065);
+    AP_Param::set_by_name("RC9_TRIM",1498);
+    AP_Param::set_by_name("RC9_OPTION",300);
+    AP_Param::set_by_name("RC9_DZ",0);
+    //motor addr
+    AP_Param::set_by_name("SC_ThrAddr",1);  //left motor controller addr
+    AP_Param::set_by_name("SC_SteAddr",2);  //right motor controller addr
+    //proximity
+    AP_Param::set_by_name("SERIAL2_PROTOCOL",40);
+    AP_Param::set_by_name("SERIAL2_BAUD",9);
+    AP_Param::set_by_name("PRX_TYPE",8);
 }
