@@ -111,6 +111,8 @@ const AP_Scheduler::Task Rover::scheduler_tasks[] = {
 #if OSD_ENABLED == ENABLED
     SCHED_TASK(publish_osd_info,        1,     10),
 #endif
+    SCHED_TASK_CLASS(SerialControl,        &rover.g2.serial_control,     update,       50,  100),
+    SCHED_TASK(update_button_handle,        100,     10),
 };
 
 constexpr int8_t Rover::_failsafe_priorities[7];
@@ -293,6 +295,8 @@ void Rover::one_second_loop(void)
     // need to set "likely flying" when armed to allow for compass
     // learning to run
     ahrs.set_likely_flying(hal.util->get_soft_armed());
+    //send moving status
+    gcs().send_to_command(103,moving_status);
 
     // send latest param values to wp_nav
     g2.wp_nav.set_turn_params(g.turn_max_g, g2.turn_radius, g2.motors.have_skid_steering());
@@ -329,6 +333,12 @@ void Rover::update_mission(void)
             mode_auto.mission.update();
         }
     }
+}
+
+void 
+Rover::control_target(uint8_t commad)
+{
+    gcs().send_to_command(104,commad);
 }
 
 #if OSD_ENABLED == ENABLED
