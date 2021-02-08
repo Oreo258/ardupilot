@@ -42,6 +42,9 @@ MAV_MODE GCS_MAVLINK_Rover::base_mode() const
     _base_mode |= MAV_MODE_FLAG_HIL_ENABLED;
 #endif
 
+    /*rover-track only-one flag use this */
+    _base_mode |=MAV_MODE_FLAG_AUTO_ENABLED;
+
     // we are armed if we are not initialising
     if (rover.control_mode != &rover.mode_initializing && rover.arming.is_armed()) {
         _base_mode |= MAV_MODE_FLAG_SAFETY_ARMED;
