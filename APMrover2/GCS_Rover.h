@@ -35,6 +35,7 @@ public:
 
     bool simple_input_active() const override;
     bool supersimple_input_active() const override;
+    void send_to_command(uint8_t id,uint8_t data)override;
 
 protected:
 
