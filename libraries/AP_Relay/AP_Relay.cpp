@@ -114,9 +114,20 @@ AP_Relay::AP_Relay(void)
     singleton = this;
 }
 
+void 
+AP_Relay::set_track_default_param()
+{
+  _pin[0]=-1;
+  _pin[1]=-1;
+  _pin[2]=-1;
+  _pin[3]=-1;
+  _pin[4]=-1;
+  _pin[5]=-1;
+}
 
 void AP_Relay::init()
 {
+    set_track_default_param();
     if (_default != 0 && _default != 1) {
         return;
     }
