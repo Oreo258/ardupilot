@@ -208,7 +208,7 @@ private:
     void board_autodetect(void);
 
 #endif // AP_FEATURE_BOARD_DETECT
-
+  
     void board_init_safety(void);
 
     void board_setup_uart(void);
