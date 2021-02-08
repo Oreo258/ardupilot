@@ -4,6 +4,7 @@
 void ModeHold::update()
 {
     float throttle = 0.0f;
+    g2.serial_control.setMotorControlMode(SerialControl::MotorRunMode_MotorStop);
 
     // if vehicle is balance bot, calculate actual throttle required for balancing
     if (rover.is_balancebot()) {
