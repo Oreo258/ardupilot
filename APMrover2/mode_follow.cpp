@@ -18,10 +18,12 @@ bool ModeFollow::_enter()
 void ModeFollow::_exit()
 {
     g2.follow.clear_offsets_if_required();
+    g2.serial_control.setMotorControlMode(SerialControl::MotorRunMode_None);
 }
 
 void ModeFollow::update()
 {
+    g2.serial_control.setMotorControlMode(SerialControl::MotorRunMode_auto);
     // stop vehicle if no speed estimate
     float speed;
     if (!attitude_control.get_forward_speed(speed)) {
@@ -67,7 +69,25 @@ void ModeFollow::update()
     }
 
     // calculate vehicle heading
-    const float desired_yaw_cd = wrap_180_cd(atan2f(desired_velocity_ne.y, desired_velocity_ne.x) * DEGX100);
+    //const float desired_yaw_cd = wrap_180_cd(atan2f(desired_velocity_ne.y, desired_velocity_ne.x) * DEGX100);
+
+    float master_heading_deg=0.0f;
+    g2.follow.get_target_heading_deg(master_heading_deg);
+    int head_mode=g2.follow.get_follow_head_mode();
+    float desired_yaw_cd=0.0f;
+    if(head_mode==1){
+        float actual_speed = safe_sqrt(sq(desired_velocity_ne.x) + sq(desired_velocity_ne.y));
+        if(actual_speed<=1.0f){
+            desired_yaw_cd=master_heading_deg*100;  //deg-->deg*100
+        }else{
+            // calculate vehicle heading
+            desired_yaw_cd = wrap_180_cd(atan2f(desired_velocity_ne.y, desired_velocity_ne.x) * DEGX100);
+        }
+    }else if(head_mode==2){
+        desired_yaw_cd=master_heading_deg*100;  //deg-->deg*100
+    }else{
+        desired_yaw_cd = wrap_180_cd(atan2f(desired_velocity_ne.y, desired_velocity_ne.x) * DEGX100);
+    }
 
     // run steering and throttle controllers
     calc_steering_to_heading(desired_yaw_cd);
