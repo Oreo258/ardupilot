@@ -1,8 +1,13 @@
 #include "mode.h"
 #include "Rover.h"
 
+void ModeSteering::_exit(){
+    g2.serial_control.setMotorControlMode(SerialControl::MotorRunMode_None);
+}
+
 void ModeSteering::update()
 {
+    g2.serial_control.setMotorControlMode(SerialControl::MotorRunMode_manual);
     // get speed forward
     float speed;
     if (!attitude_control.get_forward_speed(speed)) {
@@ -21,6 +26,7 @@ void ModeSteering::update()
     // determine if pilot is requesting pivot turn
     if (g2.motors.have_skid_steering() && is_zero(desired_speed)) {
         // pivot turning using turn rate controller
+        desired_steering=2000; //20deg 
         // convert pilot steering input to desired turn rate in radians/sec
         const float target_turn_rate = (desired_steering / 4500.0f) * radians(g2.acro_turn_rate);
         _desired_lat_accel = 0.0f;
