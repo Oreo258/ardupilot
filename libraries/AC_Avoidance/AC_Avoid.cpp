@@ -108,6 +108,7 @@ void AC_Avoid::adjust_velocity(float kP, float accel_cmss, Vector2f &desired_vel
 // convenience function to accept Vector3f.  Only x and y are adjusted
 void AC_Avoid::adjust_velocity(float kP, float accel_cmss, Vector3f &desired_vel_cms, float dt)
 {
+    _vehicle_in_limited_range=false;
     Vector2f des_vel_xy(desired_vel_cms.x, desired_vel_cms.y);
     adjust_velocity(kP, accel_cmss, des_vel_xy, dt);
     desired_vel_cms.x = des_vel_xy.x;
@@ -785,6 +786,7 @@ void AC_Avoid::adjust_velocity_polygon(float kP, float accel_cmss, Vector2f &des
                 if (!is_zero(limit_distance_cm)) {
                     if (limit_distance_cm <= margin_cm) {
                         // we are within the margin so stop vehicle
+                        _vehicle_in_limited_range=true;
                         safe_vel.zero();
                     } else {
                         // vehicle inside the given edge, adjust velocity to not violate this edge
