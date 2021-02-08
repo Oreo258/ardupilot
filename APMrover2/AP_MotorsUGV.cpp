@@ -192,6 +192,12 @@ void AP_MotorsUGV::set_throttle(float throttle)
 
     // check throttle is between -_throttle_max and  +_throttle_max
     _throttle = constrain_float(throttle, -_throttle_max, _throttle_max);
+    //update moving status
+    if(is_zero(_throttle)){
+        rover.moving_status=0;
+    }else{
+        rover.moving_status=1;
+    }
 }
 
 // set lateral input as a value from -100 to +100
@@ -662,8 +668,29 @@ void AP_MotorsUGV::output_skid_steering(bool armed, float steering, float thrott
     }
 
     // add in throttle and steering
-    const float motor_left = throttle_scaled + steering_scaled;
-    const float motor_right = throttle_scaled - steering_scaled;
+    //const float motor_left = throttle_scaled + steering_scaled;
+    //const float motor_right = throttle_scaled - steering_scaled;
+    float motor_left = throttle_scaled + steering_scaled;
+    float motor_right = throttle_scaled - steering_scaled;
+    // if auto mode,we shuld limit the output scaled do not <0
+    if(rover.get_motor_run_mode()==102){
+        if( is_positive(steering_scaled)&&
+            (fabsf(throttle_scaled) <fabsf(steering_scaled))
+          ){
+            motor_left=throttle_scaled + steering_scaled;
+            motor_right=0.5*(steering_scaled-throttle_scaled);
+        }else if( is_negative(steering_scaled)&&
+                  (fabsf(throttle_scaled)<fabsf(steering_scaled))
+                )
+        {
+            motor_left=0.5*(fabsf(steering_scaled)-fabsf(throttle_scaled));
+            motor_right = throttle_scaled - steering_scaled;
+        }
+        if(rover.get_avoid_status()){
+            motor_left=0.0f;
+            motor_right=0.0f;
+        }
+    }
 
     // send pwm value to each motor
     output_throttle(SRV_Channel::k_throttleLeft, 100.0f * motor_left, dt);
