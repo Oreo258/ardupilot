@@ -224,6 +224,21 @@ void RC_Channel_Rover::do_aux_function(const aux_func_t ch_option, const aux_swi
     case AUX_FUNC::MAINSAIL:
         break;
 
+    case AUX_FUNC::TRY_MOTOR:
+        if (ch_flag == LOW) {
+            if(rover.control_mode==&rover.mode_manual){
+                rover.control_mode->try_motor();
+            }
+        }
+        break;
+    case AUX_FUNC::TARGET_CONTROL:
+        if(ch_flag==LOW){
+            rover.control_target(0);  //down
+        }else if(ch_flag==HIGH){
+            rover.control_target(1);  //up
+        }else{     
+        }
+
     // save steering trim
     case AUX_FUNC::SAVE_TRIM:
         if (!rover.g2.motors.have_skid_steering() && rover.arming.is_armed() &&
