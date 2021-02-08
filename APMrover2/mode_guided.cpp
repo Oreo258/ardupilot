@@ -17,8 +17,13 @@ bool ModeGuided::_enter()
     return true;
 }
 
+void ModeGuided::_exit(){
+    g2.serial_control.setMotorControlMode(SerialControl::MotorRunMode_None);
+}
+
 void ModeGuided::update()
-{
+{   
+    g2.serial_control.setMotorControlMode(SerialControl::MotorRunMode_auto);
     switch (_guided_mode) {
         case Guided_WP:
         {
@@ -39,7 +44,13 @@ void ModeGuided::update()
                         stop_vehicle();
                     }
                 } else {
-                    stop_vehicle();
+                    //stop_vehicle();
+                    if(rover._need_restart_auto_mission){
+                        rover._need_restart_auto_mission=false;
+                        rover.set_mode( Mode::AUTO, ModeReason::UNKNOWN);
+                    }else{
+                        stop_vehicle();
+                    }
                 }
                 // update distance to destination
                 _distance_to_destination = rover.current_loc.get_distance(g2.wp_nav.get_destination());
