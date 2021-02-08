@@ -82,6 +82,8 @@ public:
     // return margin (in meters) that the vehicle should stay from objects
     float get_margin() const { return _margin; }
 
+    bool get_limit_status(){return _vehicle_in_limited_range;}
+
     static const struct AP_Param::GroupInfo var_info[];
 
 private:
@@ -149,6 +151,8 @@ private:
 
     bool _proximity_enabled = true; // true if proximity sensor based avoidance is enabled (used to allow pilot to enable/disable)
 
+    bool _vehicle_in_limited_range{false};
+    
     static AC_Avoid *_singleton;
 };
 
