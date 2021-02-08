@@ -32,6 +32,8 @@ public:
 
     // update button state and send messages, called periodically by main loop
     void update(void);
+
+    uint8_t getLastGpioInputMask(){return last_mask;}
     
 private:
     AP_Int8 enable;
