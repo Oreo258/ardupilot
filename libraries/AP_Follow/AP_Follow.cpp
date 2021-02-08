@@ -119,6 +119,7 @@ const AP_Param::GroupInfo AP_Follow::var_info[] = {
     // @User: Standard
     AP_GROUPINFO("_ALT_TYPE", 10, AP_Follow, _alt_type, AP_FOLLOW_ALTITUDE_TYPE_RELATIVE),
 #endif
+    AP_GROUPINFO("_HEAD_MODE", 11, AP_Follow, _follw_head_mode, 0),
 
     AP_GROUPEND
 };
