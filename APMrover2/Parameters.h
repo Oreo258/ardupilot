@@ -404,9 +404,9 @@ public:
 
     AP_Int8 mode_pin[4];
 
-    AP_Float guided_speed;
+    AP_Float guided_speed;               //do not hit the target
     AP_Int32 guided_lat;
-    AP_Int32 guided_lng;
+    AP_Int32 guided_lng;              
     AP_Int8  _formation_leader_id;
 };
 
