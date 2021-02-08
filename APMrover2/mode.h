@@ -135,6 +135,8 @@ public:
     // handle tacking request (from auxiliary switch) in sailboats
     virtual void handle_tack_request();
 
+    virtual void try_motor(){}
+
 protected:
 
     // subclasses override this to perform checks before entering the mode
@@ -406,6 +408,7 @@ protected:
     };
 
     bool _enter() override;
+    void _exit() override;
 
     GuidedMode _guided_mode;    // stores which GUIDED mode the vehicle is in
 
@@ -491,9 +494,14 @@ public:
     // manual mode does not require position or velocity estimate
     bool requires_position() const override { return false; }
     bool requires_velocity() const override { return false; }
+    //try motor
+    void try_motor()override{_try_control=true;}
 
 protected:
 
+    bool _try_control=false;
+    uint32_t _try_start_time_ms=0;
+    bool _enter() override;
     void _exit() override;
 };
 
@@ -521,6 +529,7 @@ public:
 protected:
 
     bool _enter() override;
+    void _exit() override;
 
     bool sent_notification; // used to send one time notification to ground station
     bool _loitering;        // true if loitering at end of RTL
@@ -588,7 +597,8 @@ public:
     float get_desired_lat_accel() const override { return _desired_lat_accel; }
 
 private:
-
+   
+    void _exit() override;
     float _desired_lat_accel;   // desired lateral acceleration calculated from pilot steering input
 };
 
