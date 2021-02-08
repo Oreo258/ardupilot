@@ -124,6 +124,9 @@ public:
         SerialProtocol_SLCAN = 22,
         SerialProtocol_RCIN = 23,
         SerialProtocol_Hott = 27,
+        SerialProtocol_serialControl_throttle=30,
+        SerialProtocol_serialControl_steer=31,
+        SerialProtocol_Proximity_DYP=40,
     };
 
     // get singleton instance
