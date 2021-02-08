@@ -36,10 +36,12 @@ void ModeAuto::_exit()
     if (mission.state() == AP_Mission::MISSION_RUNNING) {
         mission.stop();
     }
+    g2.serial_control.setMotorControlMode(SerialControl::MotorRunMode_None);
 }
 
 void ModeAuto::update()
-{
+{   
+    g2.serial_control.setMotorControlMode(SerialControl::MotorRunMode_auto);
     switch (_submode) {
         case Auto_WP:
         {
@@ -155,7 +157,7 @@ bool ModeAuto::get_desired_location(Location& destination) const
     case Auto_Loiter:
         return rover.mode_loiter.get_desired_location(destination);
     case Auto_Guided:
-        return rover.mode_guided.get_desired_location(destination);\
+        return rover.mode_guided.get_desired_location(destination);
     }
 
     // we should never reach here but just in case
@@ -541,6 +543,15 @@ bool ModeAuto::do_nav_wp(const AP_Mission::Mission_Command& cmd, bool always_sto
 
     // retrieve and sanitize target location
     Location cmdloc = cmd.content.location;
+
+    //set the way point speed
+    if(cmdloc.alt>0){
+        g2.wp_nav.set_desired_speed(cmdloc.alt*0.01f); //cm/s-->m/s
+    }else{
+        //default waypoint speed by param Way_point_speed
+        g2.wp_nav.set_desired_speed_to_default();
+    }
+    
     cmdloc.sanitize(rover.current_loc);
     if (!set_desired_location(cmdloc, next_leg_bearing_cd)) {
         return false;
