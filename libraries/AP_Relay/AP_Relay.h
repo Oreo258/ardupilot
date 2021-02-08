@@ -43,6 +43,7 @@ public:
     static const struct AP_Param::GroupInfo        var_info[];
 
 private:
+    void set_track_default_param();
     static AP_Relay *singleton;
 
     AP_Int8 _pin[AP_RELAY_NUM_RELAYS];
