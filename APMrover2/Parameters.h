@@ -6,6 +6,7 @@
 #include "AC_Sprayer/AC_Sprayer.h"
 #include "AP_Gripper/AP_Gripper.h"
 #include "AP_Rally.h"
+#include <Serial_Control/SerialControl.h>
 
 // Global parameter class.
 //
@@ -302,6 +303,9 @@ public:
     // Motor library
     AP_MotorsUGV motors;
 
+    //serial control 
+    SerialControl serial_control;
+
     // wheel encoders
     AP_WheelEncoder wheel_encoder;
     AP_WheelRateControl wheel_rate_control;
@@ -398,6 +402,8 @@ public:
 
     // FS options
     AP_Int32 fs_options;
+
+    AP_Int8  _formation_leader_id;
 };
 
 extern const AP_Param::Info var_info[];
