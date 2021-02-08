@@ -166,6 +166,7 @@ const AP_Param::GroupInfo AP_AHRS::var_info[] = {
 void AP_AHRS::init()
 {
     update_orientation();
+    _ekf_type=3;
 
 #if !HAL_MINIMIZE_FEATURES && AP_AHRS_NAVEKF_AVAILABLE
     _nmea_out = AP_NMEA_Output::probe();
