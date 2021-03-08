@@ -30,7 +30,8 @@ public:
         RTL          = 11,
         SMART_RTL    = 12,
         GUIDED       = 15,
-        INITIALISING = 16
+        INITIALISING = 16,
+        REPEAT       = 17
     };
 
     // Constructor
@@ -265,6 +266,8 @@ public:
     // start RTL (within auto)
     void start_RTL();
 
+    AP_Mission& get_mision(){return mission;}
+
     AP_Mission mission{
         FUNCTOR_BIND_MEMBER(&ModeAuto::start_command, bool, const AP_Mission::Mission_Command&),
         FUNCTOR_BIND_MEMBER(&ModeAuto::verify_command_callback, bool, const AP_Mission::Mission_Command&),
@@ -406,6 +409,7 @@ protected:
     };
 
     bool _enter() override;
+    void _exit() override;
 
     GuidedMode _guided_mode;    // stores which GUIDED mode the vehicle is in
 
@@ -659,4 +663,27 @@ private:
     float _initial_heading_cd;  // vehicle heading (in centi-degrees) at moment vehicle was armed
     float _desired_heading_cd;  // latest desired heading (in centi-degrees) from pilot
 };
+
+//REPEAT
+class ModeRepeat:public Mode
+
+{
+    public:
+        uint32_t mode_number() const override { return REPEAT; }
+        const char *name4() const override { return "REPE"; }
+        //methods that affect movement of the vehicle in this mode
+        void update() override;
+
+    protected:
+        bool _enter() override;
+        void _exit()  override;
+        enum MoveDirection{
+            MoveDirection_NONE=1000,
+            MoveDirection_Forword,
+            MoveDirection_BACK,
+        }_move_direction{MoveDirection_NONE};
+        Location _destination_start;      // target location to hold position around
+        Location _destination_end;
+        int _count;
+}; 
 
