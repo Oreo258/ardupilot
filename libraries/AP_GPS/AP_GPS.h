@@ -187,6 +187,8 @@ public:
         int32_t  rtk_iar_num_hypotheses;   ///< Current number of integer ambiguity hypotheses
     };
 
+    void set_track_default_param();
+
     /// Startup initialisation.
     void init(const AP_SerialManager& serial_manager);
 
