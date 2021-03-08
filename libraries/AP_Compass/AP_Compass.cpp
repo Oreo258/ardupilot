@@ -662,6 +662,14 @@ Compass::Compass(void)
     }
     _singleton = this;
     AP_Param::setup_object_defaults(this, var_info);
+    set_track_default_param();
+}
+void 
+Compass::set_track_default_param()
+{
+    _use_for_yaw._priv_instance[0]=0;
+    _use_for_yaw._priv_instance[1]=0;
+    _use_for_yaw._priv_instance[2]=0;
 }
 
 // Default init method
