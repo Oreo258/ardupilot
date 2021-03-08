@@ -6,6 +6,7 @@
 #include "AC_Sprayer/AC_Sprayer.h"
 #include "AP_Gripper/AP_Gripper.h"
 #include "AP_Rally.h"
+#include <DAC_CTRL/DAC_Ctrl.h>
 
 // Global parameter class.
 //
@@ -308,6 +309,8 @@ public:
 
     // steering and throttle controller
     AR_AttitudeControl attitude_control;
+
+    DACCtrl _dac;
 
     // turn radius of vehicle (only used in steering mode)
     AP_Float turn_radius;
