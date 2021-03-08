@@ -17,8 +17,14 @@ bool ModeGuided::_enter()
     return true;
 }
 
+void ModeGuided::_exit()
+{
+    g2._dac.setMotorControlMode(DACCtrl::MotorRunMode_None);
+}
+
 void ModeGuided::update()
 {
+    g2._dac.setMotorControlMode(DACCtrl::MotorRunMode_auto);
     switch (_guided_mode) {
         case Guided_WP:
         {
