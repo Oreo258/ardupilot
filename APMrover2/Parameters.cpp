@@ -628,6 +628,8 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     // @User: Advanced
     AP_GROUPINFO("FS_OPTIONS", 48, ParametersG2, fs_options, 0),
 
+    AP_SUBGROUPINFO(_dac, "DAC_", 49, ParametersG2, DACCtrl),
+
     AP_GROUPEND
 };
 
@@ -669,6 +671,7 @@ ParametersG2::ParametersG2(void)
     beacon(rover.serial_manager),
     motors(rover.ServoRelayEvents),
     wheel_rate_control(wheel_encoder),
+    _dac(rover.ServoRelayEvents),
     attitude_control(rover.ahrs),
     smart_rtl(),
     proximity(),
@@ -806,4 +809,38 @@ void Rover::load_parameters(void)
                                                       AP_BoardConfig::BOARD_SAFETY_OPTION_BUTTON_ACTIVE_SAFETY_ON|
                                                       AP_BoardConfig::BOARD_SAFETY_OPTION_BUTTON_ACTIVE_ARMED);
 #endif
+
+    AP_Param::defaults_table_struct _init_table[]={
+        {"MODE_CH",5},
+        {"MODE1",0},
+        {"MODE2",0},
+        {"MODE3",4},
+        {"MODE4",4},
+        {"MODE5",10},
+        {"MODE6",10},
+        {"FOLL_ENABLE",0},
+        {"GPS_TYPE",5},
+        {"BRD_PWM_COUNT",0},
+        {"BRD_SAFETYENABLE",0},
+        {"AHRS_EKF_TYPE",3},
+        {"EK3_ENABLE",1},
+        {"EK3_MAG_CAL",5},
+        {"EK3_GPS_TYPE",0},
+        {"SERIAL4_PROTOCOL",30},
+        {"SERIAL4_BAUD",115},
+        {"COMPASS_USE",0},
+        {"COMPASS_USE2",0},
+        {"COMPASS_USE3",0}
+        {"BTN_ENABLE",0},
+        {"RELAY_DEFAULT",0},
+        {"RELAY_PIN",50},
+        {"RELAY_PIN2",51},
+        {"RELAY_PIN3",52},
+        {"RELAY_PIN4",53},
+        {"RELAY_PIN5",54},
+        {"RELAY_PIN6",55},
+        {"SERVO1_FUNCTION",26},
+        {"SERVO3_FUNCTION",70}
+    };
+    AP_Param::set_defaults_from_table(_init_table,sizeof(_init_table)/sizeof(_init_table[0]));
 }
