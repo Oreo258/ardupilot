@@ -47,6 +47,7 @@ void RC_Channel_Rover::init_aux_function(const aux_func_t ch_option, const aux_s
     case AUX_FUNC::FOLLOW:
     case AUX_FUNC::SAILBOAT_TACK:
     case AUX_FUNC::MAINSAIL:
+    case AUX_FUNC::REPEAT:
         break;
     case AUX_FUNC::SAILBOAT_MOTOR_3POS:
         do_aux_function_sailboat_motor_3pos(ch_flag);
@@ -222,6 +223,10 @@ void RC_Channel_Rover::do_aux_function(const aux_func_t ch_option, const aux_swi
 
     // mainsail input, nothing to do
     case AUX_FUNC::MAINSAIL:
+        break;
+
+    case AUX_FUNC::REPEAT:
+        do_aux_function_change_mode(rover.mode_repeat, ch_flag);
         break;
 
     // save steering trim
