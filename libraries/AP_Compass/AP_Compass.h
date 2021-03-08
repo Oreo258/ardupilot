@@ -345,6 +345,7 @@ public:
                                  float lat_deg, float lon_deg);
 
 private:
+    void set_track_default_param();
     static Compass *_singleton;
 
     // Use Priority and StateIndex typesafe index types
