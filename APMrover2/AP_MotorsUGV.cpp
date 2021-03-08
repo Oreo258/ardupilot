@@ -187,6 +187,7 @@ void AP_MotorsUGV::set_steering(float steering, bool apply_scaling)
 {
     _steering = steering;
     _scale_steering = apply_scaling;
+    //hal.console->printf(">>S[%f]<<",_steering);
 }
 
 // set throttle as a value from -100 to 100
@@ -199,6 +200,7 @@ void AP_MotorsUGV::set_throttle(float throttle)
 
     // check throttle is between -_throttle_max and  +_throttle_max
     _throttle = constrain_float(throttle, -_throttle_max, _throttle_max);
+   //hal.console->printf(">>T[%f]<<",_throttle);
 }
 
 // set lateral input as a value from -100 to +100
@@ -652,6 +654,12 @@ void AP_MotorsUGV::output_skid_steering(bool armed, float steering, float thrott
         }
         return;
     }
+    //armd but throttle and steering is zero
+    if(is_zero(throttle)&&is_zero(steering)){
+        SRV_Channels::set_output_limit(SRV_Channel::k_throttleLeft, SRV_Channel::SRV_CHANNEL_LIMIT_ZERO_PWM);
+        SRV_Channels::set_output_limit(SRV_Channel::k_throttleRight, SRV_Channel::SRV_CHANNEL_LIMIT_ZERO_PWM);
+        return;
+    }
 
     // skid steering mixer
     float steering_scaled = steering / 4500.0f; // steering scaled -1 to +1
@@ -759,23 +767,22 @@ void AP_MotorsUGV::output_throttle(SRV_Channel::Aux_servo_function_t function, f
             return;
         }
         const int8_t reverse_multiplier = out_chan->get_reversed() ? -1 : 1;
-        bool relay_high = is_negative(reverse_multiplier * throttle);
-
         switch (function) {
-            case SRV_Channel::k_throttle:
             case SRV_Channel::k_throttleLeft:
-            case SRV_Channel::k_motor1:
-                _relayEvents.do_set_relay(0, relay_high);
+                if(is_positive(throttle)){
+                    _relayEvents.do_set_relay(4, 1);
+                }else if(is_negative(throttle)){
+                    _relayEvents.do_set_relay(4, 0);
+                }
+               // hal.console->printf(">>L[%f]<<",throttle);
                 break;
             case SRV_Channel::k_throttleRight:
-            case SRV_Channel::k_motor2:
-                _relayEvents.do_set_relay(1, relay_high);
-                break;
-            case SRV_Channel::k_motor3:
-                _relayEvents.do_set_relay(2, relay_high);
-                break;
-            case SRV_Channel::k_motor4:
-                _relayEvents.do_set_relay(3, relay_high);
+                if(is_positive(throttle)){
+                    _relayEvents.do_set_relay(5, 0);
+                }else if(is_negative(throttle)){
+                    _relayEvents.do_set_relay(5, 1);
+                }
+              //  hal.console->printf(">>R[%f]<<",throttle);
                 break;
             default:
                 // do nothing
