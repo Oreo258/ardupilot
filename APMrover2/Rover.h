@@ -124,6 +124,8 @@ public:
 
     friend class Sailboat;
 
+    friend class ModeRepeat;
+
     Rover(void);
 
     // HAL::Callbacks implementation.
@@ -289,6 +291,7 @@ private:
     ModeSmartRTL mode_smartrtl;
     ModeFollow mode_follow;
     ModeSimple mode_simple;
+    ModeRepeat mode_repeat;
 
     // cruise throttle and speed learning
     typedef struct {
