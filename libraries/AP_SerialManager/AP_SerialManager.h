@@ -124,6 +124,7 @@ public:
         SerialProtocol_SLCAN = 22,
         SerialProtocol_RCIN = 23,
         SerialProtocol_Hott = 27,
+        SerialProtocol_Steer = 30,   //steer  Serial
     };
 
     // get singleton instance
