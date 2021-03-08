@@ -292,8 +292,15 @@ const AP_Param::GroupInfo AP_BoardConfig::var_info[] = {
     AP_GROUPEND
 };
 
+void AP_BoardConfig::set_track_default_param()
+{
+    pwm_count=0;
+    state.safety_enable=0;
+}
+
 void AP_BoardConfig::init()
 {
+    set_track_default_param();
     board_setup();
 
     AP::rtc().set_utc_usec(hal.util->get_hw_rtc(), AP_RTC::SOURCE_HW);
