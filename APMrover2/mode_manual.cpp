@@ -5,6 +5,7 @@ void ModeManual::_exit()
 {
     // clear lateral when exiting manual mode
     g2.motors.set_lateral(0);
+    g2._dac.setMotorControlMode(DACCtrl::MotorRunMode_None);
 }
 
 void ModeManual::update()
@@ -17,7 +18,7 @@ void ModeManual::update()
     if (rover.is_balancebot()) {
         rover.balancebot_pitch_control(desired_throttle);
     }
-
+    g2._dac.setMotorControlMode(DACCtrl::MotorRunMode_manual);
     // set sailboat mainsail
     float desired_mainsail;
     g2.sailboat.get_pilot_desired_mainsail(desired_mainsail);
