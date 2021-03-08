@@ -311,7 +311,6 @@ AP_SerialManager::AP_SerialManager()
     // setup parameter defaults
     AP_Param::setup_object_defaults(this, var_info);
 }
-
 // init_console - initialise console at default baud rate
 void AP_SerialManager::init_console()
 {
@@ -466,6 +465,13 @@ void AP_SerialManager::init()
                     state[i].uart->begin(map_baudrate(state[i].baud),
                                          AP_SERIALMANAGER_SLCAN_BUFSIZE_RX,
                                          AP_SERIALMANAGER_SLCAN_BUFSIZE_TX);
+                    break;
+
+                case SerialProtocol_Steer:
+                    state[i].uart->begin(map_baudrate(state[i].baud), 
+                                         AP_SERIALMANAGER_GPS_BUFSIZE_RX,
+                                         AP_SERIALMANAGER_GPS_BUFSIZE_TX);
+                    state[i].uart->set_flow_control(AP_HAL::UARTDriver::FLOW_CONTROL_DISABLE);
                     break;
 
 #ifndef HAL_BUILD_AP_PERIPH
