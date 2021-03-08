@@ -36,10 +36,12 @@ void ModeAuto::_exit()
     if (mission.state() == AP_Mission::MISSION_RUNNING) {
         mission.stop();
     }
+    g2._dac.setMotorControlMode(DACCtrl::MotorRunMode_None);
 }
 
 void ModeAuto::update()
 {
+    g2._dac.setMotorControlMode(DACCtrl::MotorRunMode_auto);
     switch (_submode) {
         case Auto_WP:
         {
