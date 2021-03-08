@@ -310,10 +310,18 @@ AP_GPS::AP_GPS()
 
     AP_Param::setup_object_defaults(this, var_info);
 
+    set_track_default_param();
+
     if (_singleton != nullptr) {
         AP_HAL::panic("AP_GPS must be singleton");
     }
     _singleton = this;
+}
+
+void AP_GPS::set_track_default_param()
+{
+    _type[0]=5;
+    _type[1]=0;
 }
 
 // return true if a specific type of GPS uses a UART
