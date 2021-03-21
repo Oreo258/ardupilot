@@ -35,7 +35,7 @@ const AP_FWVersion AP_FWVersion::fwver{
     .middleware_hash_str = nullptr,
 #ifdef CHIBIOS_GIT_VERSION
     .os_name = "stable",
-    .os_hash_str = "1.0",
+    .os_hash_str = "2.0",
 #else
     .os_name = nullptr,
     .os_hash_str = nullptr,
