@@ -6,7 +6,7 @@
 
 #include "ap_version.h"
 
-#define THISFIRMWARE "HuaWei Special equipment"
+#define THISFIRMWARE "Unmanned Ground Vehicle"
 
 // the following line is parsed by the autotest scripts
 #define FIRMWARE_VERSION 4,1,0,FIRMWARE_VERSION_TYPE_DEV
