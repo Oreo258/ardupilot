@@ -28,6 +28,7 @@
 #include <AP_ToshibaCAN/AP_ToshibaCAN.h>
 #include <AP_SerialManager/AP_SerialManager.h>
 #include <AP_PiccoloCAN/AP_PiccoloCAN.h>
+#include <AP_GeneralCAN/AP_GeneralCAN.h>
 #include <AP_EFI/AP_EFI_NWPMU.h>
 #include "AP_CANTester.h"
 #include <GCS_MAVLink/GCS_MAVLink.h>
@@ -243,6 +244,15 @@ void AP_CANManager::init()
                 continue;
             }
             AP_Param::load_object_from_eeprom((CANTester*)_drivers[drv_num], CANTester::var_info);
+#endif
+            } else if (drv_type[drv_num] == Driver_Type_GeneralCAN) {
+#if HAL_NUM_CAN_IFACES > 1 && !HAL_MINIMIZE_FEATURES
+            _drivers[drv_num] = _drv_param[drv_num]._generalcan = new AP_GeneralCAN;
+
+            if (_drivers[drv_num] == nullptr) {
+                AP_BoardConfig::config_error("Failed to allocate GeneralCAN %d\n\r", drv_num + 1);
+                continue;
+            }
 #endif
         } else {
             continue;
