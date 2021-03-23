@@ -24,6 +24,7 @@
 #include "AP_Proximity_LightWareSF45B.h"
 #include "AP_Proximity_SITL.h"
 #include "AP_Proximity_AirSimSITL.h"
+#include "AP_Proximity_SR73F.h"
 
 extern const AP_HAL::HAL &hal;
 
@@ -263,6 +264,15 @@ void AP_Proximity::handle_msg(const mavlink_message_t &msg)
     }
 }
 
+void AP_Proximity::update_sector(const float angle, const float dist, const uint8_t object_count)
+{
+    for (uint8_t i=0; i<num_instances; i++) {
+        if (valid_instance(i)) {
+            drivers[i]->update_sector(angle, dist, object_count);
+        }
+    }
+}
+
 //  detect if an instance of a proximity sensor is connected.
 void AP_Proximity::detect_instance(uint8_t instance)
 {
@@ -323,6 +333,11 @@ void AP_Proximity::detect_instance(uint8_t instance)
             return;
         }
         break;
+
+    case Type::SR73F:
+        state[instance].instance = instance;
+        drivers[instance] = new AP_Proximity_SR73F(*this, state[instance]);
+        return;
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
     case Type::SITL:
