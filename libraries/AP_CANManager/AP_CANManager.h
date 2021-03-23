@@ -59,6 +59,7 @@ public:
         Driver_Type_CANTester = 5,
         Driver_Type_EFI_NWPMU = 6,
         Driver_Type_USD1 = 7,
+        Driver_Type_GeneralCAN = 8,
     };
 
     void init(void);
@@ -141,6 +142,7 @@ private:
         AP_CANDriver* _uavcan;
         AP_CANDriver* _kdecan;
         AP_CANDriver* _piccolocan;
+        AP_CANDriver* _generalcan;
     };
 
     CANIface_Params _interfaces[HAL_NUM_CAN_IFACES];
