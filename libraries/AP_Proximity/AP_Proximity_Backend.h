@@ -46,6 +46,8 @@ public:
     // handle mavlink DISTANCE_SENSOR messages
     virtual void handle_msg(const mavlink_message_t &msg) {}
 
+    virtual void update_sector(const float angle, const float dist, const uint8_t object_count) {}
+
     // get total number of obstacles, used in GPS based Simple Avoidance
     uint8_t get_obstacle_count() { return boundary.get_obstacle_count(); }
     
