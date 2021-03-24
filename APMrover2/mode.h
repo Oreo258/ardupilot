@@ -680,6 +680,8 @@ public:
 
     // return distance (in meters) to destination
     float get_distance_to_destination() const override { return _distance_to_destination; }
+    
+    bool set_desired_speed(float speed);
 
 protected:
 
@@ -687,8 +689,8 @@ protected:
 
 private:
  
-    bool round;
-    int32_t round_count;
+    bool repeat;
+    int32_t repeat_count;
     uint32_t last_stop_time_ms;
     Location origin_loc;
     Location destination_loc;
