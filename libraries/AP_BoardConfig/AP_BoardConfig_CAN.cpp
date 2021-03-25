@@ -175,16 +175,17 @@ void AP_BoardConfig_CAN::init()
                     AP_BoardConfig::sensor_config_error("ToshibaCAN init failed");
                     continue;
                 }
-            } else {
-                continue;
-            }
-        } else if (prot_type == Protocol_Type_GeneralCAN) {
+            } else if (prot_type == Protocol_Type_GeneralCAN) {
                 _drivers[i]._driver = _drivers[i]._gcan = new AP_GeneralCAN;
 
                 if (_drivers[i]._driver == nullptr) {
-                    AP_BoardConfig::config_error("GeneralCAN init failed");
+                    AP_BoardConfig::sensor_config_error("GeneralCAN init failed");
                     continue;
                 }
+            } else {
+                continue;
+            }
+        
 #if AP_UAVCAN_SLCAN_ENABLED
             if (_slcan._can_port == 0) {
                 _drivers[i]._driver->init(i, true);
