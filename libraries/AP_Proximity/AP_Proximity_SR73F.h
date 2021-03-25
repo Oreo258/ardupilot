@@ -28,7 +28,7 @@ private:
     float _angle_deg_last;
     float _distance_m_last;
     uint8_t   _last_sector;                   ///< last sector requested
-    float _angle_last[PROXIMITY_SECTORS_MAX];
-    float _distance_min_last[PROXIMITY_SECTORS_MAX];
-    bool _distance_valid_last[PROXIMITY_SECTORS_MAX];
+    float _angle_last[PROXIMITY_NUM_SECTORS];
+    float _distance_min_last[PROXIMITY_NUM_SECTORS];
+    bool _distance_valid_last[PROXIMITY_NUM_SECTORS];
 };
