@@ -49,8 +49,7 @@ void AP_Proximity_SR73F::update_sector(const float angle, const float dist, cons
 
     static uint8_t obj_count = 0;
 
-    uint8_t sector;
-    convert_angle_to_sector(angle, sector);
+   const uint8_t sector = convert_angle_to_sector(angle);
 
     // min
     if (_distance_min_last[sector] > dist) {
