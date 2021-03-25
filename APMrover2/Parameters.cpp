@@ -627,8 +627,8 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     // @Bitmask: 0:Failsafe enabled in Hold mode
     // @User: Advanced
     AP_GROUPINFO("FS_OPTIONS", 48, ParametersG2, fs_options, 0),
-    AP_GROUPINFO("SC_ROUND_MAX", 49, ParametersG2, round_max, 3),
-    AP_GROUPINFO("SC_ROUND_DELAY", 50, ParametersG2, round_delay, 3),
+    AP_GROUPINFO("SC_REPEAT_TIME", 49, ParametersG2, repeat_time, 3),
+    AP_GROUPINFO("SC_REPEAT_DELAY", 50, ParametersG2, repeat_delay, 3),
     AP_GROUPINFO("SC_PIN0", 51, ParametersG2, mode_pin[0], 50),
     AP_GROUPINFO("SC_PIN1", 52, ParametersG2, mode_pin[1], 51),
     AP_GROUPINFO("SC_PIN2", 53, ParametersG2, mode_pin[2], 52),
