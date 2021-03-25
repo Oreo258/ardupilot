@@ -3475,6 +3475,7 @@ MAV_RESULT GCS_MAVLINK::handle_command_preflight_can(const mavlink_command_long_
 #endif
             }
             case AP_BoardConfig_CAN::Protocol_Type_UAVCAN:
+            case AP_BoardConfig_CAN::Protocol_Type_GeneralCAN:
             case AP_BoardConfig_CAN::Protocol_Type_None:
             default:
                 break;
@@ -4490,6 +4491,7 @@ bool GCS_MAVLINK::try_send_message(const enum ap_message id)
                     break;
                 }
                 case AP_BoardConfig_CAN::Protocol_Type_UAVCAN:
+                case AP_BoardConfig_CAN::Protocol_Type_GeneralCAN:
                 case AP_BoardConfig_CAN::Protocol_Type_None:
                 default:
                     break;
