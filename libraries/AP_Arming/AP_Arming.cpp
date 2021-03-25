@@ -777,6 +777,7 @@ bool AP_Arming::can_checks(bool report)
                         return false;
                     }
                 }
+                case AP_BoardConfig_CAN::Protocol_Type_GeneralCAN:
                 case AP_BoardConfig_CAN::Protocol_Type_None:
                 default:
                     break;
