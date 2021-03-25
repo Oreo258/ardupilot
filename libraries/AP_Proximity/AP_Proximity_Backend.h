@@ -47,6 +47,8 @@ public:
     // handle mavlink DISTANCE_SENSOR messages
     virtual void handle_msg(const mavlink_message_t &msg) {}
 
+    virtual void update_sector(const float angle, const float dist, const uint8_t object_count) {}
+
     // get boundary points around vehicle for use by avoidance
     //   returns nullptr and sets num_points to zero if no boundary can be returned
     const Vector2f* get_boundary_points(uint16_t& num_points) const;
