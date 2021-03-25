@@ -10,6 +10,7 @@ bool ModeRepeat::_enter()
     if (!rover.mode_auto.mission.read_cmd_from_storage(1, cmd)) {
         return false;
     }
+
     // it's not a waypoint
     if (cmd.id != MAV_CMD_NAV_WAYPOINT) {
         return false;
@@ -19,6 +20,11 @@ bool ModeRepeat::_enter()
     if (!g2.wp_nav.set_desired_location(cmd.content.location)) {
         return false;
     }
+
+    // copy current loc
+    origin_loc = rover.current_loc;
+
+    destination_loc = cmd.content.location;
 
     // initialise waypoint speed
     g2.wp_nav.set_desired_speed_to_default();
@@ -40,15 +46,15 @@ void ModeRepeat::update()
 
         // we have reached the destination
         // boats loiter, rovers stop
-    if (stop_vehicle()) {
-            if (repeat_count < g2.round_max) {
-                const uint32_t now_ms = AP_HAL::millis();
+        if (stop_vehicle()) {
+            if (repeat_count < g2.repeat_time) {
+               const uint32_t now_ms = AP_HAL::millis();
 
                 if (last_stop_time_ms == 0) {
                     last_stop_time_ms = now_ms;
                 }
 
-                if (now_ms - last_stop_time_ms > g2.round_delay * 1000) {
+                if (now_ms - last_stop_time_ms > g2.repeat_delay * 1000) {
                     if (!repeat) {
                         // set destination
                         if (!g2.wp_nav.set_desired_location(origin_loc)) {
@@ -57,7 +63,7 @@ void ModeRepeat::update()
                         set_reversed(true);
                     } else {
                         gcs().send_text(MAV_SEVERITY_INFO, "Repeat %d finished", unsigned(repeat_count + 1));
-                        if (++repeat_count < g2.round_max) {
+                        if (++repeat_count < g2.repeat_time) {
                             // set destination
                             if (!g2.wp_nav.set_desired_location(destination_loc)) {
                                 //return;
@@ -65,11 +71,11 @@ void ModeRepeat::update()
                             set_reversed(false);
                         }
                     }
-                    repeat = !repeat;
+                     repeat = !repeat;
                     last_stop_time_ms = 0;
                 }
             }
-    }
+        }
 
         // update distance to destination
         _distance_to_destination = rover.current_loc.get_distance(g2.wp_nav.get_destination());
