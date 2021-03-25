@@ -35,6 +35,7 @@
 #include <AP_UAVCAN/AP_UAVCAN.h>
 #include <AP_KDECAN/AP_KDECAN.h>
 #include <AP_ToshibaCAN/AP_ToshibaCAN.h>
+#include <AP_GeneralCAN/AP_GeneralCAN.h>
 #include <AP_SerialManager/AP_SerialManager.h>
 extern const AP_HAL::HAL& hal;
 
@@ -177,6 +178,13 @@ void AP_BoardConfig_CAN::init()
             } else {
                 continue;
             }
+        } else if (prot_type == Protocol_Type_GeneralCAN) {
+                _drivers[i]._driver = _drivers[i]._gcan = new AP_GeneralCAN;
+
+                if (_drivers[i]._driver == nullptr) {
+                    AP_BoardConfig::config_error("GeneralCAN init failed");
+                    continue;
+                }
 #if AP_UAVCAN_SLCAN_ENABLED
             if (_slcan._can_port == 0) {
                 _drivers[i]._driver->init(i, true);
