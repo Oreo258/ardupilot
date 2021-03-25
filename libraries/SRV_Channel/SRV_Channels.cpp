@@ -281,6 +281,7 @@ void SRV_Channels::push()
                 ap_tcan->update();
                 break;
             }
+            case AP_BoardConfig_CAN::Protocol_Type_GeneralCAN:
             case AP_BoardConfig_CAN::Protocol_Type_None:
             default:
                 break;
