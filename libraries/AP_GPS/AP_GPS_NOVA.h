@@ -143,11 +143,33 @@ private:
         double vertspd;
         float resv;
     };
+
+    struct PACKED headingg3a
+    {
+        uint32_t solstat;      ///< Solution status
+        uint32_t postype;      ///< Position type
+        float baseline;            ///< latitude (deg)
+        float yaw;            ///< longitude (deg)
+        float pitch;            ///< height above mean sea level (m)
+        float resv1;;      ///< relationship between the geoid and the ellipsoid (m)
+        float yaw_standard_dev;      ///< datum id number
+        float pitch_standard_dev;         ///< latitude standard deviation (m)
+        uint8_t stnid[4];         ///< longitude standard deviation (m)
+        uint8_t svstracked;
+        uint8_t svsused;
+        uint8_t svsheight;
+        uint8_t svsheight_L2;
+        uint8_t resv2;
+        uint8_t extsolstat;
+        uint8_t resv3;
+        uint8_t gpsglosigmask;
+    };
     
     union PACKED msgbuffer {
         bestvel bestvelu;
         bestpos bestposu;
         psrdop psrdopu;
+        headingg3a headingg3au
         uint8_t bytes[256];
     };
     
