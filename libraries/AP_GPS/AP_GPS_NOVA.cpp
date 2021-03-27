@@ -280,6 +280,15 @@ AP_GPS_NOVA::process_message(void)
         return false;
     }
 
+    if (messageid == 971) //headingg3a
+    {
+        const headingg3a &headingg3au = nova_msg.data.headingg3au;
+        state.gps_yaw = wrap_360(headingg3au.yaw*0.01f);
+
+        return true;
+
+    }
+
     // ensure out position and velocity stay insync
     if (_new_position && _new_speed && _last_vel_time == state.time_week_ms) {
         _new_speed = _new_position = false;
