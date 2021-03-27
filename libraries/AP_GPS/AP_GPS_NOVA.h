@@ -169,7 +169,7 @@ private:
         bestvel bestvelu;
         bestpos bestposu;
         psrdop psrdopu;
-        headingg3a headingg3au
+        headingg3a headingg3au;
         uint8_t bytes[256];
     };
     
