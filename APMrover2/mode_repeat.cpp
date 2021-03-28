@@ -11,7 +11,7 @@ bool ModeRepeat::_enter()
         return false;
     }
 
-    // it's not a waypoint
+   // it's not a waypoint
     if (cmd.id != MAV_CMD_NAV_WAYPOINT) {
         return false;
     }
@@ -21,12 +21,12 @@ bool ModeRepeat::_enter()
         return false;
     }
 
+    // initialise waypoint speed
     // copy current loc
     origin_loc = rover.current_loc;
 
     destination_loc = cmd.content.location;
 
-    // initialise waypoint speed
     g2.wp_nav.set_desired_speed_to_default();
 
     repeat = false;
@@ -46,23 +46,23 @@ void ModeRepeat::update()
 
         // we have reached the destination
         // boats loiter, rovers stop
-        if (stop_vehicle()) {
+    if (stop_vehicle()) {
             if (repeat_count < g2.repeat_time) {
-               const uint32_t now_ms = AP_HAL::millis();
+                const uint32_t now_ms = AP_HAL::millis();
 
                 if (last_stop_time_ms == 0) {
                     last_stop_time_ms = now_ms;
                 }
 
                 if (now_ms - last_stop_time_ms > g2.repeat_delay * 1000) {
-                    if (!repeat) {
+                    if (!round) {
                         // set destination
                         if (!g2.wp_nav.set_desired_location(origin_loc)) {
                             //return;
                         }
                         set_reversed(true);
                     } else {
-                        gcs().send_text(MAV_SEVERITY_INFO, "Repeat %d finished", unsigned(repeat_count + 1));
+                        gcs().send_text(MAV_SEVERITY_INFO, "Round %d finished", unsigned(round_count + 1));
                         if (++repeat_count < g2.repeat_time) {
                             // set destination
                             if (!g2.wp_nav.set_desired_location(destination_loc)) {
@@ -71,9 +71,8 @@ void ModeRepeat::update()
                             set_reversed(false);
                         }
                     }
-                     repeat = !repeat;
+               repeat = !repeat;
                     last_stop_time_ms = 0;
-                }
             }
         }
 
