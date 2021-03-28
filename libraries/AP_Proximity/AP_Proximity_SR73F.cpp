@@ -14,7 +14,7 @@
  */
 
 #include <AP_HAL/AP_HAL.h>
-#include <AP_GeneralCAN/AP_GeneralCAN.h>
+//#include <AP_GeneralCAN/AP_GeneralCAN.h>
 #include "AP_Proximity_SR73F.h"
 #include <ctype.h>
 #include <stdio.h>
