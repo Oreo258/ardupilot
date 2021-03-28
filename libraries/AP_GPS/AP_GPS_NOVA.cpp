@@ -280,12 +280,63 @@ AP_GPS_NOVA::process_message(void)
         return false;
     }
 
-    if (messageid == 971) //headingg3a
+    if (messageid == 971) //heading
     {
-        const headingg3a &headingg3au = nova_msg.data.headingg3au;
-        state.gps_yaw = wrap_360(headingg3au.yaw*0.01f);
+        /*const headingg3a &headingg3au = nova_msg.data.headingg3au;
+        state.gps_yaw = wrap_360(headingg3au.yaw);
+        state.have_gps_yaw = true;
+        state.gps_yaw_configured = true;
+        state.have_gps_yaw_accuracy = true;
+        hal.console->printf(">>R[%f]<<",state.gps_yaw);*/
+        const heading &headingu = nova_msg.data.headingu;
 
-        return true;
+        state.gps_yaw = headingu.heading;
+        state.gps_yaw_accuracy = headingu.hdgsdev;
+
+        if (headingu.solstat == 0) // have a solution
+        {
+            switch (headingu.postype)
+            {
+                case 16:
+                    state.gps_yaw_status = AP_GPS::GPS_OK_FIX_3D;
+                    break;
+                case 17: // psrdiff
+                case 18: // waas
+                case 20: // omnistar
+                case 68: // ppp_converg
+                case 69: // ppp
+                    state.gps_yaw_status = AP_GPS::GPS_OK_FIX_3D_DGPS;
+                    break;
+                case 32: // l1 float
+                case 33: // iono float
+                case 34: // narrow float
+                    state.gps_yaw_status = AP_GPS::GPS_OK_FIX_3D_RTK_FLOAT;
+                    break;
+                case 48: // l1 int
+                case 50: // narrow int
+                    state.gps_yaw_status = AP_GPS::GPS_OK_FIX_3D_RTK_FIXED;
+                    // gps yaw valid until into RTX FIXED status
+                    state.have_gps_yaw = true;
+                    state.have_gps_yaw_accuracy = true;
+                    state.gps_yaw_configured = true;
+                    break;
+                case 0: // NONE
+                case 1: // FIXEDPOS
+                case 2: // FIXEDHEIGHT
+                default:
+                    state.gps_yaw_status = AP_GPS::NO_FIX;
+                    break;
+            }
+        }
+        else
+        {
+            state.gps_yaw_status = AP_GPS::NO_FIX;
+        }
+
+        Debug("heading %.2f, accuracy %.2f\n", state.heading, state.heading_accuracy);
+        Debug("solstat %d, postype %d\n", headingu.solstat, state.heading_status);
+
+        return false;
 
     }
 
