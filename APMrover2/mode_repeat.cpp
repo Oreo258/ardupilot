@@ -21,7 +21,7 @@ bool ModeRepeat::_enter()
         return false;
     }
 
-    // copy current loc
+    //copy current loc
     origin_loc = rover.current_loc;
 
     destination_loc = cmd.content.location;
