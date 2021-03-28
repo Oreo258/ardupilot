@@ -144,15 +144,15 @@ private:
         float resv;
     };
 
-    struct PACKED headingg3a
+    struct PACKED heading
     {
         uint32_t solstat;      ///< Solution status
         uint32_t postype;      ///< Position type
-        float baseline;            ///< latitude (deg)
-        float yaw;            ///< longitude (deg)
+        float length;            ///< latitude (deg)
+        float heading;            ///< longitude (deg)
         float pitch;            ///< height above mean sea level (m)
-        float resv1;;      ///< relationship between the geoid and the ellipsoid (m)
-        float yaw_standard_dev;      ///< datum id number
+        float resv;      ///< relationship between the geoid and the ellipsoid (m)
+        float hdgsdev;      ///< datum id number
         float pitch_standard_dev;         ///< latitude standard deviation (m)
         uint8_t stnid[4];         ///< longitude standard deviation (m)
         uint8_t svstracked;
@@ -169,7 +169,7 @@ private:
         bestvel bestvelu;
         bestpos bestposu;
         psrdop psrdopu;
-        headingg3a headingg3au;
+        heading headingu;
         uint8_t bytes[256];
     };
     
