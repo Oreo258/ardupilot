@@ -124,7 +124,7 @@ public:
     float get_speed_default(bool rtl = false) const;
 
     // set desired speed in m/s
-    bool set_desired_speed(float speed);
+    virtual bool set_desired_speed(float speed);
 
     // restore desired speed to default from parameter values (CRUISE_SPEED or WP_SPEED)
     // rtl argument should be true if called from RTL or SmartRTL modes (handled here to avoid duplication)
@@ -676,7 +676,7 @@ public:
     bool is_autopilot_mode() const override { return true; }
 
     // do not allow arming from this mode
-    //bool allows_arming() const override { return true; }
+    bool allows_arming()  { return true; }
 
     // return desired location
     bool get_desired_location(Location& destination) const override WARN_IF_UNUSED;
@@ -684,25 +684,20 @@ public:
     // return distance (in meters) to destination
     float get_distance_to_destination() const override { return _distance_to_destination; }
 
-    //bool reached_destination() const override;
-
     // set desired speed in m/s
-    bool set_desired_speed(float speed);
+    bool set_desired_speed(float speed) const override;
 
 protected:
 
     bool _enter() override;
 
-   // bool sent_notification; // used to send one time notification to ground station
-   // bool _loitering;        // true if loitering at end of RTL
-
 private:
  
-    bool repeat;
-    int32_t repeat_count;
-    uint32_t last_stop_time_ms;
+    bool round;
+    int32_t round_count;
     Location origin_loc;
     Location destination_loc;
+
 };
 
 
