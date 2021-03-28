@@ -176,7 +176,8 @@ void AP_Logger::Write_GPS(uint8_t i, uint64_t time_us)
         yaw_accuracy  : yaw_accuracy_deg,
         have_vv       : (uint8_t)gps.have_vertical_velocity(i),
         sample_ms     : gps.last_message_time_ms(i),
-        delta_ms      : gps.last_message_delta_time_ms(i)
+        delta_ms      : gps.last_message_delta_time_ms(i),
+        yaw_status    : (uint8_t)gps.yaw_status(i)
     };
     WriteBlock(&pkt2, sizeof(pkt2));
 }
