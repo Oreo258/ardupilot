@@ -227,6 +227,7 @@ struct PACKED log_GPA {
     uint8_t  have_vv;
     uint32_t sample_ms;
     uint16_t delta_ms;
+    uint8_t  yaw_status;
 };
 
 struct PACKED log_Message {
