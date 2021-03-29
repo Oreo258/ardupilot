@@ -399,8 +399,8 @@ public:
     // FS options
     AP_Int32 fs_options;
     
-    AP_Int32 repeat_time;
-    AP_Float repeat_delay;
+    AP_Int32 round_max;
+    AP_Float round_delay;
 
     AP_Int8 mode_pin[4];
 
