@@ -17,20 +17,20 @@ bool ModeRepeat::_enter()
     }
 
     // set destination
-    if (!g2.wp_nav.set_desired_location(cmd.content.location)) {
+   if (!g2.wp_nav.set_desired_location(cmd.content.location)) {
         return false;
     }
 
-    //copy current loc
+    // copy current loc
     origin_loc = rover.current_loc;
 
-    destination_loc = cmd.content.location;
+    destination_loc = cmd.content.location; 
 
     // initialise waypoint speed
     g2.wp_nav.set_desired_speed_to_default();
 
-    repeat = false;
-    repeat_count = 0;
+    round = false;
+    round_count = 0;
     last_stop_time_ms = 0;
 
     return true;
@@ -43,27 +43,24 @@ void ModeRepeat::update()
         // update navigation controller
         navigate_to_waypoint();
     } else {
-
-        // we have reached the destination
-        // boats loiter, rovers stop
         if (stop_vehicle()) {
-            if (repeat_count < g2.repeat_time) {
-               const uint32_t now_ms = AP_HAL::millis();
+            if (round_count < g2.round_max) {
+                const uint32_t now_ms = AP_HAL::millis();
 
                 if (last_stop_time_ms == 0) {
                     last_stop_time_ms = now_ms;
                 }
 
-                if (now_ms - last_stop_time_ms > g2.repeat_delay * 1000) {
-                    if (!repeat) {
+                if (now_ms - last_stop_time_ms > g2.round_delay * 1000) {
+                    if (!round) {
                         // set destination
                         if (!g2.wp_nav.set_desired_location(origin_loc)) {
                             //return;
                         }
                         set_reversed(true);
                     } else {
-                        gcs().send_text(MAV_SEVERITY_INFO, "Repeat %d finished", unsigned(repeat_count + 1));
-                        if (++repeat_count < g2.repeat_time) {
+                        gcs().send_text(MAV_SEVERITY_INFO, "Reapeat %d finished", unsigned(round_count + 1));
+                        if (++round_count < g2.round_max) {
                             // set destination
                             if (!g2.wp_nav.set_desired_location(destination_loc)) {
                                 //return;
@@ -71,8 +68,8 @@ void ModeRepeat::update()
                             set_reversed(false);
                         }
                     }
-                     repeat = !repeat;
-                    last_stop_time_ms = 0;
+                        round = !round;
+                        last_stop_time_ms = 0;
                 }
             }
         }
@@ -90,14 +87,4 @@ bool ModeRepeat::get_desired_location(Location& destination) const
         return true;
     }
     return false;
-}
-
-// set desired speed in m/s
-bool ModeRepeat::set_desired_speed(float speed)
-{
-    if (is_negative(speed)) {
-        return false;
-    }
-    g2.wp_nav.set_desired_speed(speed);
-    return true;
 }
