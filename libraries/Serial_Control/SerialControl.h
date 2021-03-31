@@ -63,8 +63,8 @@ private:
 	AP_Int8 steer_addr;
 	AP_Float _max_speed;
 	AP_Float _min_speed;
-	AP_Float _stop_point_lat;
-	AP_Float _stop_point_lon;
+	AP_Int32 _stop_point_lat;
+	AP_Int32 _stop_point_lon;
 	AP_Float _stop_speed;
 	control_struct_t throttle_data;
 	control_struct_t steer_data;
