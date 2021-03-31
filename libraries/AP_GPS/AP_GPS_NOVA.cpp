@@ -56,7 +56,10 @@ const char* const AP_GPS_NOVA::_initialisation_blob[6] {
     "log bestposb ontime 0.2 0 nohold\r\n", // get bestpos
     "log bestvelb ontime 0.2 0 nohold\r\n", // get bestvel
     "log psrdopb onchanged\r\n", // tersus
+    //"log psrdopb onchanged\r\n", // tersus
+    //"log psrdopb ontime 0.2\r\n", // comnav
     "log psrdopb ontime 0.2\r\n", // comnav
+    //"log psrdopb\r\n" ,// poll message, as dop only changes when a sat is dropped/added to the visible list
     "log psrdopb\r\n" // poll message, as dop only changes when a sat is dropped/added to the visible list
 };
 
@@ -289,10 +292,11 @@ AP_GPS_NOVA::process_message(void)
         state.have_gps_yaw_accuracy = true;
         hal.console->printf(">>R[%f]<<",state.gps_yaw);*/
         const heading &headingu = nova_msg.data.headingu;
-
-        state.gps_yaw = headingu.heading;
+        state.gps_yaw = wrap_360(headingu.heading);
+        state.have_gps_yaw = true;
+        state.gps_yaw_configured = true;
         state.gps_yaw_accuracy = headingu.hdgsdev;
-
+        hal.console->printf(">>R[%f]<<",state.gps_yaw);
         if (headingu.solstat == 0) // have a solution
         {
             switch (headingu.postype)
