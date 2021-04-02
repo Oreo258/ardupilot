@@ -32,6 +32,25 @@ void Rover::init_ardupilot()
     // Check the EEPROM format version before loading any parameters from EEPROM.
     //
 
+     const char* unique_id[] = {"fmuv2 0025001C 3337510D 31303337",
+                               "fmuv2 0021002E 3337510D 31303337"};
+
+    char sysid[40];
+    hal.util->get_system_id(sysid);
+
+    void id_found = false;
+
+    for (uint8_t i = 0; i < ARRAY_SIZE(unique_id); i++) {
+        if (memcmp((void*)unique_id[i], (void*)sysid, strlen(unique_id[i])) == 0) {
+            id_found = true;
+            break;
+        }
+    }
+
+    if (!id_found) {
+        AP_HAL::panic("Bad id");
+    }
+
     load_parameters();
 #if STATS_ENABLED == ENABLED
     // initialise stats module
