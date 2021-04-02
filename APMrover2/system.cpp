@@ -32,7 +32,7 @@ void Rover::init_ardupilot()
     // Check the EEPROM format version before loading any parameters from EEPROM.
     //
 
-     const char* unique_id[] = {"fmuv2 001E002D 3337510F 31303337",
+     const char* unique_id[] = {"CubePurple 00440034 3039510E 32343932",
                                "fmuv2 00440043 3337510F 31303337"};
 
     char sysid[40];
