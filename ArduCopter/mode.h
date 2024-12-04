@@ -538,6 +538,13 @@ private:
 
     bool check_for_mission_change();    // detect external changes to mission
 
+    // 拍照
+    bool target_angle;
+
+    bool photo;
+
+    bool yaw_cmd;
+
     void takeoff_run();
     void wp_run();
     void land_run();
