@@ -449,6 +449,13 @@ void AP_SerialManager::init()
                                          AP_SERIALMANAGER_GIMBAL_BUFSIZE_RX,
                                          AP_SERIALMANAGER_GIMBAL_BUFSIZE_TX);
                     break;
+                case SerialProtocol_Siyi:
+                    // Note baudrate is hardcoded to 115200
+                    state[i].baud.set_and_default(AP_SERIALMANAGER_GIMBAL_BAUD / 1000);   // update baud param in case user looks at it
+                    uart->begin(state[i].baudrate(),
+                                         AP_SERIALMANAGER_GIMBAL_BUFSIZE_RX,
+                                         AP_SERIALMANAGER_GIMBAL_BUFSIZE_TX);
+                    break;
                 case SerialProtocol_Aerotenna_USD1:
                     state[i].protocol.set_and_save(SerialProtocol_Rangefinder);
                     break;
