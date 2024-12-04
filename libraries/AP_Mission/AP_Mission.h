@@ -401,6 +401,9 @@ public:
         uint16_t index;             // this commands position in the command list
         uint16_t id;                // mavlink command id
         uint16_t p1;                // general purpose parameter 1
+        int16_t angle_yaw;
+        int16_t angle_pitch;
+        int16_t gimbal_focus;
         Content content;
 
         // for items which store in location, we offer a few more bits
