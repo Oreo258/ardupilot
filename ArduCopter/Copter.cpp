@@ -162,6 +162,7 @@ const AP_Scheduler::Task Copter::scheduler_tasks[] = {
 #if RANGEFINDER_ENABLED == ENABLED
     SCHED_TASK(read_rangefinder,      20,    100,  33),
 #endif
+    SCHED_TASK_CLASS(Transfer,             &copter.g2._trans,           update,          20,  75,  35),
 #if HAL_PROXIMITY_ENABLED
     SCHED_TASK_CLASS(AP_Proximity,         &copter.g2.proximity,        update,         200,  50,  36),
 #endif
@@ -630,6 +631,13 @@ void Copter::one_hz_loop()
         // set all throttle channel settings
         motors->update_throttle_range();
 #endif
+    }
+
+    mavlink_message_t msg={0};
+    if(g2._trans.setCopterAltitudeToMavlink(g.sysid_this_mav,&msg)){
+        for (uint8_t i=0; i<gcs().num_gcs(); i++) {
+            gcs().chan(i)->get_uart()->write((uint8_t*)&msg,sizeof(msg));
+        }
     }
 
     // update assigned functions and enable auxiliary servos
