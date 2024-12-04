@@ -1489,7 +1489,7 @@ void ModeAuto::do_nav_wp(const AP_Mission::Mission_Command& cmd)
     // this will be used to remember the time in millis after we reach or pass the WP.
     loiter_time = 0;
     // this is the delay, stored in seconds
-    loiter_time_max = cmd.p1;
+    loiter_time_max = 10;
 
     // set next destination if necessary
     if (!set_next_wp(cmd, target_loc)) {
@@ -1652,7 +1652,7 @@ void ModeAuto::do_loiter_time(const AP_Mission::Mission_Command& cmd)
 
     // setup loiter timer
     loiter_time     = 0;
-    loiter_time_max = cmd.p1;     // units are (seconds)
+    loiter_time_max = 10;     // units are (seconds)
 }
 
 // do_loiter_alt - initiate loitering at a point until a given altitude is reached
@@ -1714,7 +1714,7 @@ void ModeAuto::do_spline_wp(const AP_Mission::Mission_Command& cmd)
     // this will be used to remember the time in millis after we reach or pass the WP.
     loiter_time = 0;
     // this is the delay, stored in seconds
-    loiter_time_max = cmd.p1;
+    loiter_time_max = 10;
 
     // set next destination if necessary
     if (!set_next_wp(cmd, dest_loc)) {
@@ -2125,8 +2125,12 @@ bool ModeAuto::verify_yaw()
 // verify_nav_wp - check if we have reached the next way point
 bool ModeAuto::verify_nav_wp(const AP_Mission::Mission_Command& cmd)
 {
+    int8_t direction = 0;
     // check if we have reached the waypoint
     if ( !copter.wp_nav->reached_wp_destination() ) {
+        target_angle = true;
+        photo = true;
+        yaw_cmd = true;
         return false;
     }
 
@@ -2139,6 +2143,51 @@ bool ModeAuto::verify_nav_wp(const AP_Mission::Mission_Command& cmd)
         }
     }
 
+    // 旋转飞机角度
+    if(((millis() - loiter_time) / 1000) >= loiter_time_max / 5 && yaw_cmd) {
+        if(cmd.p1 > ahrs.yaw_sensor/10) {
+            direction = 1;
+        } else {
+            direction = -1;
+            //cmd.content.yaw.relative_angle = 0;
+        }
+        auto_yaw.set_fixed_yaw(cmd.p1, 0, direction, 0);
+        yaw_cmd = false;
+    }
+
+    if(target_angle && verify_yaw()){
+        // // ahrs.yaw_sensor 范围0~36000
+        // // 云台顺时针转动
+        // int16_t angle_yaw = cmd.angle_yaw;
+        // if(angle_yaw >= 3600)
+        // {
+        //     angle_yaw -= 3600;
+        // }
+
+        // // 云台逆时针转动
+        // if(angle_yaw <= 0)
+        // {
+        //     angle_yaw += 3600;
+        // }
+        // int16_t current_angle_yaw = ahrs.yaw_sensor/10 - angle_yaw;
+        // if(fabs(current_angle_yaw) >= 1800)
+        // {
+        //     if(current_angle_yaw < 0)
+        //     {
+        //         current_angle_yaw = 360 + current_angle_yaw;
+        //     } else {
+        //         current_angle_yaw = 360 - current_angle_yaw;
+        //     }           
+        // }
+        //gcs().send_text(MAV_SEVERITY_INFO, "int=%d, float=%d", absolute_movement_int, absolute_movement_float);
+        copter.g2._trans.get_target_altitude_input(cmd.angle_yaw, cmd.angle_pitch, cmd.gimbal_focus);
+        target_angle = false;
+    }
+
+    if(((millis() - loiter_time) / 1000) >= loiter_time_max / 2 && photo && verify_yaw()) {
+        copter.g2._trans.take_photo(photo);
+        photo = false;
+    }
     // check if timer has run out
     if (((millis() - loiter_time) / 1000) >= loiter_time_max) {
         if (loiter_time_max == 0) {
