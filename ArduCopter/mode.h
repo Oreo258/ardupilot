@@ -679,6 +679,16 @@ private:
     int32_t condition_value;  // used in condition commands (eg delay, change alt, etc.)
     uint32_t condition_start;
 
+     // 拍照
+    bool target_angle;
+    bool photo;
+    bool yaw_cmd;
+
+    // 云台控制角度
+    int16_t gimbal_target_yaw;
+    int16_t gimbal_target_pitch;
+    bool    send_target_angle;
+
     // Land within Auto state
     enum class State {
         FlyToLocation = 0,
