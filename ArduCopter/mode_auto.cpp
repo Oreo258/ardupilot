@@ -2153,6 +2153,9 @@ bool ModeAuto::verify_nav_wp(const AP_Mission::Mission_Command& cmd)
 {
     // check if we have reached the waypoint
     if ( !copter.wp_nav->reached_wp_destination() ) {
+        target_angle = true;
+        photo = true;
+        yaw_cmd = true;
         return false;
     }
 
@@ -2163,6 +2166,30 @@ bool ModeAuto::verify_nav_wp(const AP_Mission::Mission_Command& cmd)
             // play a tone
             AP_Notify::events.waypoint_complete = 1;
         }
+    }
+
+    if(target_angle) {
+        // ahrs.yaw_sensor 范围0~36000
+        // 云台顺时针转动
+        int16_t angle_yaw = cmd.angle_yaw;
+        if(angle_yaw >= 3600)
+        {
+            angle_yaw -= 3600;
+        }
+
+        // 云台逆时针转动
+        if(angle_yaw < 0)
+        {
+            angle_yaw += 3600;
+        }
+        int16_t current_angle_yaw = ahrs.yaw_sensor/10 - angle_yaw;
+        copter.g2._trans.get_target_altitude_input(current_angle_yaw, cmd.angle_pitch, cmd.gimbal_focus);
+        target_angle = false;
+    }
+
+    if(((millis() - loiter_time) / 1000) >= loiter_time_max / 2 && photo) {
+        copter.g2._trans.take_photo(photo);
+        photo = false;
     }
 
     // check if timer has run out
