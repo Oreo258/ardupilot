@@ -1310,6 +1310,7 @@ ParametersG2::ParametersG2(void)
 #if WEATHERVANE_ENABLED == ENABLED
     ,weathervane()
 #endif
+    ,_trans()
 {
     AP_Param::setup_object_defaults(this, var_info);
     AP_Param::setup_object_defaults(this, var_info2);
