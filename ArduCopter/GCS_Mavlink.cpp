@@ -1510,6 +1510,9 @@ void GCS_MAVLINK_Copter::handle_message(const mavlink_message_t &msg)
         copter.g2.toy_mode.handle_message(msg);
         break;
 #endif
+    case MAVLINK_MSG_ID_DATA96:
+        copter.g2._trans.handle_to_transfer(msg);
+        break;
         
     default:
         GCS_MAVLINK::handle_message(msg);
